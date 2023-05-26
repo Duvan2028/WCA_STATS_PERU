@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>WCA Members</title>
+</head>
+<body>
+  <h1>Diamond Members</h1>
+  <div id="tableContainer"></div>
+
+  <script>
+    function loadCSVFiles() {
+      fetch('WCA_MEMBERS/WCA_Diamond_members.csv')
+        .then(function(response) {
+          return response.text();
+        })
+        .then(function(csvData) {
+          const table = createTableFromCSV(csvData);
+          const tableContainer = document.getElementById('tableContainer');
+          tableContainer.appendChild(table);
+        })
+        .catch(function(error) {
+          console.log('Error al cargar el archivo CSV:', error);
+        });
+    }
+
+    function createTableFromCSV(csvData) {
+      const table = document.createElement('table');
+      const rows = csvData.split('\n');
+
+      rows.forEach(function(row) {
+        const rowData = row.split(',');
+        const tableRow = document.createElement('tr');
+
+        rowData.forEach(function(data) {
+          const tableData = document.createElement('td');
+          tableData.textContent = data;
+          tableRow.appendChild(tableData);
+        });
+
+        table.appendChild(tableRow);
+      });
+
+      return table;
+    }
+
+    // Cargar archivos CSV al cargar la página
+    window.onload = loadCSVFiles;
+  </script>
+</body>
+</html>
