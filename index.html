@@ -11,6 +11,7 @@
       width: 100%;
       border-collapse: collapse;
       font-family: Arial, sans-serif;
+      margin-bottom: 20px;
     }
 
     th, td {
@@ -34,18 +35,29 @@
 
   <script>
     function loadCSVFiles() {
-      fetch('WCA_MEMBERS/WCA_Diamond_members.csv')
-        .then(function(response) {
-          return response.text();
-        })
-        .then(function(csvData) {
-          const table = createTableFromCSV(csvData);
-          const tableContainer = document.getElementById('tableContainer');
-          tableContainer.appendChild(table);
-        })
-        .catch(function(error) {
-          console.log('Error al cargar el archivo CSV:', error);
-        });
+      const fileUrls = [
+        'WCA_MEMBERS/WCA_Bronze_members.csv',
+        'WCA_MEMBERS/WCA_Silver_members.csv',
+        'WCA_MEMBERS/WCA_Gold_members.csv',
+        'WCA_MEMBERS/WCA_Platinium_members.csv',
+        'WCA_MEMBERS/WCA_Opal_members.csv',
+        'WCA_MEMBERS/WCA_Diamond_members.csv'
+        ];
+      
+      fileUrls.forEach(function(fileUrl) {
+        fetch(fileUrl)
+          .then(function(response) {
+            return response.text();
+          })
+          .then(function(csvData) {
+            const table = createTableFromCSV(csvData);
+            const tableContainer = document.getElementById('tableContainer');
+            tableContainer.appendChild(table);
+          })
+          .catch(function(error) {
+            console.log('Error al cargar el archivo CSV:', error);
+          });
+      });
     }
 
     function createTableFromCSV(csvData) {
