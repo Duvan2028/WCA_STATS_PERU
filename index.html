@@ -1,80 +1,80 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Lectura de archivos CSV desde Google Drive</title>
+  <title>Mostrar archivos CSV desde Google Drive</title>
 </head>
 <body>
-    <h1>Lectura de archivos CSV desde Google Drive</h1>
-    <div id="tableContainer"></div>
-    
-    <script src="https://apis.google.com/js/api.js"></script>
-    <script>
-        function handleClientLoad() {
-            gapi.load('client', initClient);
-        }
-        
-        function initClient() {
-            gapi.client.init({
-                apiKey: 'AIzaSyDd_mraBiGDvV3-WW7pMmqLSQ9mcRmCZh4',
-                discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest']
-            }).then(function() {
-                loadCSVFilesFromDrive('1qTemvRlWS2MWY8htaWAqf32fO8q-yB4t');
-            }).catch(function(error) {
-                console.log('Error al inicializar la API de Google Drive:', error);
+  <h1>Mostrar archivos CSV desde Google Drive</h1>
+  <div id="tableContainer"></div>
+
+  <script src="https://apis.google.com/js/api.js"></script>
+  <script>
+    function handleClientLoad() {
+      gapi.load('client', initClient);
+    }
+
+    function initClient() {
+      gapi.client.init({
+        apiKey: 'AIzaSyDd_mraBiGDvV3-WW7pMmqLSQ9mcRmCZh4',
+        discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
+      }).then(function() {
+        loadCSVFilesFromDrive('1qTemvRlWS2MWY8htaWAqf32fO8q-yB4t');
+      }).catch(function(error) {
+        console.log('Error al inicializar la API de Google Drive:', error);
+      });
+    }
+
+    function loadCSVFilesFromDrive(folderId) {
+      gapi.client.drive.files.list({
+        q: "'" + folderId + "' in parents and mimeType = 'text/csv'",
+        pageSize: 10,
+        fields: 'files(name, webViewLink)',
+      }).then(function(response) {
+        const files = response.result.files;
+        const tableContainer = document.getElementById('tableContainer');
+
+        files.forEach(function(file) {
+          const csvFileUrl = file.webViewLink.replace('/view', '/export?format=csv');
+
+          fetch(csvFileUrl)
+            .then(function(response) {
+              return response.text();
+            })
+            .then(function(csvData) {
+              const table = createTableFromCSV(csvData);
+              tableContainer.appendChild(table);
+            })
+            .catch(function(error) {
+              console.log('Error al cargar el archivo CSV:', error);
             });
-        }
-        
-        function loadCSVFilesFromDrive(folderId) {
-            gapi.client.drive.files.list({
-                q: "'" + folderId + "' in parents and mimeType = 'text/csv'",
-                pageSize: 10,
-                fields: 'files(name, webViewLink)'
-            }).then(function(response) {
-                const files = response.result.files;
-                const tableContainer = document.getElementById('tableContainer');
-                
-                files.forEach(function(file) {
-                    const csvFileUrl = file.webViewLink.replace('/view', '/export?format=csv');
-                    
-                    fetch(csvFileUrl)
-                        .then(function(response) {
-                            return response.text();
-                        })
-                        .then(function(csvData) {
-                            const table = createTableFromCSV(csvData);
-                            tableContainer.appendChild(table);
-                        })
-                        .catch(function(error) {
-                            console.log('Error al cargar el archivo CSV:', error);
-                        });
-                });
-            }).catch(function(error) {
-                console.log('Error al obtener la lista de archivos:', error);
-            });
-        }
-        
-        function createTableFromCSV(csvData) {
-            const table = document.createElement('table');
-            const rows = csvData.split('\n');
-            
-            for (let i = 0; i < rows.length; i++) {
-                const row = document.createElement('tr');
-                const columns = rows[i].split(',');
-                
-                for (let j = 0; j < columns.length; j++) {
-                    const cell = document.createElement(i === 0 ? 'th' : 'td');
-                    cell.textContent = columns[j];
-                    row.appendChild(cell);
-                }
-                
-                table.appendChild(row);
-            }
-            
-            return table;
-        }
-        
-        // Inicializar la carga de la API de Google Drive
-        handleClientLoad();
-    </script>
+        });
+      }).catch(function(error) {
+        console.log('Error al obtener la lista de archivos:', error);
+      });
+    }
+
+    function createTableFromCSV(csvData) {
+      const table = document.createElement('table');
+      const rows = csvData.split('\n');
+
+      rows.forEach(function(row) {
+        const rowData = row.split(',');
+        const tableRow = document.createElement('tr');
+
+        rowData.forEach(function(data) {
+          const tableData = document.createElement('td');
+          tableData.textContent = data;
+          tableRow.appendChild(tableData);
+        });
+
+        table.appendChild(tableRow);
+      });
+
+      return table;
+    }
+
+    // Inicializar la carga de la API de Google Drive
+    handleClientLoad();
+  </script>
 </body>
 </html>
