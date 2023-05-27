@@ -1,10 +1,7 @@
 <!DOCTYPE html>
-<html lang="en-US">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>WCA Members</title>
+  <title>Mis tablas CSV</title>
   <style>
     /* Estilos para la tabla */
     table {
@@ -23,34 +20,50 @@
       background-color: #f2f2f2;
     }
 
-    /* Estilos adicionales */
-    h1 {
+    /* Estilos para los títulos */
+    h1, h2 {
       color: #333;
     }
   </style>
 </head>
 <body>
-  <h1>Diamond Members</h1>
+  <h1>Mis tablas CSV</h1>
   <div id="tableContainer"></div>
 
   <script>
-    function loadCSVFiles(file_path) {
-      fetch(file_path)
-        .then(function(response) {
-          return response.text();
-        })
-        .then(function(csvData) {
-          const table = createTableFromCSV(csvData);
-          const tableContainer = document.getElementById('tableContainer');
-          tableContainer.appendChild(table);
-        })
-        .catch(function(error) {
-          console.log('Error al cargar el archivo CSV:', error);
-        });
+    function loadCSVFiles() {
+      const files = [
+        { title: 'Bronze Members', url: 'WCA_MEMBERS/WCA_Bronze_members.csv' },
+        { title: 'Silver Members', url: 'WCA_MEMBERS/WCA_Silver_members.csv' },
+        { title: 'Gold Members', url: 'WCA_MEMBERS/WCA_Gold_members.csv' },
+        { title: 'Platinium Members', url: 'WCA_MEMBERS/WCA_Platinium_members.csv' },
+        { title: 'Opal Members', url: 'WCA_MEMBERS/WCA_Opal_members.csv' },
+        { title: 'Diamond Members', url: 'WCA_MEMBERS/WCA_Diamond_members.csv' },
+        
+      ];
+
+      files.forEach(function(file) {
+        fetch(file.url)
+          .then(function(response) {
+            return response.text();
+          })
+          .then(function(csvData) {
+            const table = createTableFromCSV(csvData, file.title);
+            const tableContainer = document.getElementById('tableContainer');
+            tableContainer.appendChild(table);
+          })
+          .catch(function(error) {
+            console.log('Error al cargar el archivo CSV:', error);
+          });
+      });
     }
 
-    function createTableFromCSV(csvData) {
+    function createTableFromCSV(csvData, title) {
       const table = document.createElement('table');
+      const caption = document.createElement('caption');
+      caption.textContent = title;
+      table.appendChild(caption);
+
       const rows = csvData.split('\n');
 
       rows.forEach(function(row) {
@@ -70,7 +83,7 @@
     }
 
     // Cargar archivos CSV al cargar la página
-    window.onload = loadCSVFiles('WCA_MEMBERS/WCA_Diamond_members.csv');
+    window.onload = loadCSVFiles;
   </script>
 </body>
 </html>
