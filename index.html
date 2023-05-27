@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Mis tablas CSV</title>
+  <title>WCA Membership</title>
   <style>
     /* Estilos para la tabla */
     table {
@@ -18,6 +18,7 @@
 
     th {
       background-color: #f2f2f2;
+      font-weight: bold;
     }
 
     /* Estilos para los títulos */
@@ -27,7 +28,7 @@
   </style>
 </head>
 <body>
-  <h1>Mis tablas CSV</h1>
+  <h1>WCA Memberships</h1>
   <div id="tableContainer"></div>
 
   <script>
@@ -61,7 +62,9 @@
     function createTableFromCSV(csvData, title) {
       const table = document.createElement('table');
       const caption = document.createElement('caption');
-      caption.textContent = title;
+      const titleElement = document.createElement('strong');
+      titleElemet.textContent = title;
+      caption.appendChild(titleElement);
       table.appendChild(caption);
 
       const rows = csvData.split('\n');
